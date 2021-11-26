@@ -24,27 +24,24 @@ services:
     ports:
       - "5000:5000"
 
-    twitter-streamer:
-      build: ./twitter-stream/twitter-scraper
-      container_name: twitter-streamer
-      user: root
-      environment:
-        - VM_EXTERNAL_IP=34.88.146.250
-      volumes:
-        - spark-data:/home/jovyan/data
-      depends_on:
-        - spark-driver-app
-        - spark-master
-        - spark-worker-1
-        - spark-worker-2
-        - zookeeper
-        - kafka1
-        - sentiment-api
-
+  twitter-streamer:
+    build: ./twitter-stream/twitter-scraper
+    container_name: twitter-streamer
+    user: root
+    environment:
+      - VM_EXTERNAL_IP=34.88.146.250
+    volumes:
+      - spark-data:/home/jovyan/data
+    depends_on:
+      - spark-driver-app
+      - spark-master
+      - spark-worker-1
+      - spark-worker-2
+      - zookeeper
+      - kafka1
 
   spark-driver-app:
-    build: jupyter-all-spark-notebook-gcp    # jupyter/all-spark-notebook with spark configurations for bigquery and gcs
-    #    image: jupyter/all-spark-notebook:spark-3.1.1
+    build: jupyter-all-spark-notebook-gcp
     container_name: spark-driver-app
     user: root
     ports:
@@ -53,7 +50,7 @@ services:
     environment:
       - JUPYTER_ENABLE_LAB=yes
     volumes:
-      - notebooks:/home/jovyan/notebooks  # jovyan is the default user of the image all-spark-notebook:spark-3.1.2. Do not change this
+      - notebooks:/home/jovyan/notebooks
       - spark-data:/home/jovyan/data
       - spark-checkpoint:/home/jovyan/checkpoint
   spark-master:
@@ -128,7 +125,7 @@ services:
       - "9092:9092"
     environment:
       # Fill in external IP of VM
-      KAFKA_ADVERTISED_LISTENERS: LISTENER_DOCKER_INTERNAL://kafka1:9093,LISTENER_DOCKER_EXTERNAL://YOUR_VM_EXTERNAL_IP:9092
+      KAFKA_ADVERTISED_LISTENERS: LISTENER_DOCKER_INTERNAL://kafka1:9093,LISTENER_DOCKER_EXTERNAL://34.88.146.250:9092
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: LISTENER_DOCKER_INTERNAL:PLAINTEXT,LISTENER_DOCKER_EXTERNAL:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: LISTENER_DOCKER_INTERNAL
       KAFKA_ZOOKEEPER_CONNECT: "zookeeper:2181"

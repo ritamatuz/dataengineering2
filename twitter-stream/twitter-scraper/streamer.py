@@ -1,12 +1,11 @@
 import os
-import csv
 import twint
 
 
 class TwitterPartyStreamer:
     def __init__(self):
         self.temp = "temp.csv"
-        self.stream = "stream.csv"
+        self.stream = "/home/jovyan/data/stream.csv"
         self.resume = "resume.txt"
         self.stream_columns = ["id", "created_at", "timezone", "user_id", "tweet", "hashtags"]
         self.parties = [
@@ -67,6 +66,3 @@ class TwitterPartyStreamer:
                     # Append new tweets to the stream
                     if int(row.split(",")[0]) > last_id:
                         f_stream.write(row)
-
-        # Remove the temporary file
-        os.remove(self.temp)
