@@ -3,7 +3,7 @@ import json
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 
 
-class Predictor:
+class SentimentAnalyzer:
     def __init__(self):
         self.model = None
 
