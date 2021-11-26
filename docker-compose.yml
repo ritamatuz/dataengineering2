@@ -19,11 +19,11 @@ volumes:
 
 services:
   # services need to be completed and tested
-  polls-scraper:
-    build: ./polls-batch/polls-scraper
+  # polls-scraper:
+  #   build: ./polls-batch/polls-scraper
 
-  twitter-scraper:
-    build: ./twitter-stream/twitter-scraper
+  # twitter-scraper:
+  #   build: ./twitter-stream/twitter-scraper
 
   sentiment-api:
     build: ./sentiment-api
