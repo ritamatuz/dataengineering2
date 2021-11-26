@@ -4,31 +4,42 @@ volumes:
   spark-data:
     driver_opts:
       type: none
-      device: /home/rita_matuz/data
+      device: /home/r_j_a_debruijn/data
       o: bind
   notebooks:
     driver_opts:
       type: none
-      device: /home/rita_matuz/notebooks
+      device: /home/r_j_a_debruijn/notebooks
       o: bind
   spark-checkpoint:
     driver_opts:
       type: none
-      device: /home/rita_matuz/checkpoint
+      device: /home/r_j_a_debruijn/checkpoint
       o: bind
 
 services:
-  # services need to be completed and tested
-  # polls-scraper:
-  #   build: ./polls-batch/polls-scraper
-
-  # twitter-scraper:
-  #   build: ./twitter-stream/twitter-scraper
 
   sentiment-api:
     build: ./sentiment-api
     ports:
       - "5000:5000"
+
+    twitter-streamer:
+      build: ./twitter-stream/twitter-scraper
+      container_name: twitter-streamer
+      user: root
+      environment:
+        - VM_EXTERNAL_IP=34.88.146.250
+      volumes:
+        - spark-data:/home/jovyan/data
+      depends_on:
+        - spark-driver-app
+        - spark-master
+        - spark-worker-1
+        - spark-worker-2
+        - zookeeper
+        - kafka1
+        - sentiment-api
 
 
   spark-driver-app:
