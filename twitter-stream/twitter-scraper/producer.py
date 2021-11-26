@@ -72,7 +72,11 @@ if __name__ == '__main__':
 
             print("Producing tweets in Kafka's twitter_politics topic.", file=sys.stderr)
 
+            first_line = True
             for line in lines:
+                if first_line:
+                    continue
+                first_line = False
                 msgs = process_raw_tweet(line, streamer.queries)
                 for msg in msgs:
                     produce_to_topic(producer, "twitter_politics", msg)

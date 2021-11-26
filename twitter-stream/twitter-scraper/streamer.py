@@ -58,8 +58,7 @@ class TwitterPartyStreamer:
                 return file.readline().decode().split(",")
         except (FileNotFoundError, OSError):
             with open(self.stream, "w") as file:
-                # Write headers: file.write(",".join(self.stream_columns) + "\n")
-                file.write("")
+                file.write(",".join(self.stream_columns) + "\n")
             return []
 
     def ingest(self):
