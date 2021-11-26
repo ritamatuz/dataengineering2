@@ -11,7 +11,7 @@ class SentimentAnalyzer:
         self.model = SentimentIntensityAnalyzer()
   
 
-    def predict(self, tweet: str):
+    def analyze(self, tweet: str):
         if self.model is None:
             self.initialize_model()
 
