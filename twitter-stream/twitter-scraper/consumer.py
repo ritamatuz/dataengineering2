@@ -6,6 +6,6 @@ if __name__ == '__main__':
                              auto_offset_reset='earliest',
                              consumer_timeout_ms=10000)
     print(consumer.topics())
-    consumer.subscribe(topics=['count'])
+    consumer.subscribe(topics=['avg_sentiment'])
     for msg in consumer:
         print(msg.value.decode("utf-8"))
