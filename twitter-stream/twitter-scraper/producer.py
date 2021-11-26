@@ -33,7 +33,7 @@ def process_raw_tweet(line, queries):
     row = line.split(",")
 
     # Convert timestamp
-    timestamp = datetime.timestamp(datetime.strptime(row[1], "%Y-%m-%d %H:%M:%S %Z"))
+    timestamp = datetime.timestamp(datetime.strptime(row[1], "%Y-%m-%d %H:%M:%S"))
 
     # Compute the sentiment
     sentiment = requests.post(os.getenv("VM_EXTERNAL_IP") + ':5000', json={"tweet": row[3]})
