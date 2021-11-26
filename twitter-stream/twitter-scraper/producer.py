@@ -33,6 +33,7 @@ def process_raw_tweet(line, queries):
     row = line.split(",")
 
     # Convert timestamp
+    print(row[1], file=sys.stderr)
     timestamp = datetime.timestamp(datetime.strptime(row[1], "%Y-%m-%d %H:%M:%S"))
 
     # Compute the sentiment
