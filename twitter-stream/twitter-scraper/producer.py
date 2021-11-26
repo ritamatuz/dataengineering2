@@ -3,7 +3,18 @@ import sys
 import time
 from streamer import TwitterPartyStreamer
 from kafka import KafkaProducer
+from kafka.errors import TopicAlreadyExistsError
 from kafka.admin import KafkaAdminClient, NewTopic
+
+
+def create_topic(admin_client, topic):
+    try:
+        admin_client.create_topics(new_topics=[
+            NewTopic(name=topic, num_partitions=1, replication_factor=1),
+        ], validate_only=False)
+        print(f"Topic {topic} created.", file=sys.stderr)
+    except TopicAlreadyExistsError:
+        print(f"Topics {topic} already exist.")
 
 
 if __name__ == '__main__':
@@ -12,11 +23,8 @@ if __name__ == '__main__':
 
         print("Creating topics...", file=sys.stderr)
         admin_client = KafkaAdminClient(bootstrap_servers=os.getenv("VM_EXTERNAL_IP") + ':9092', client_id='DE2')
-        admin_client.create_topics(new_topics=[
-            NewTopic(name="twitter_politics", num_partitions=1, replication_factor=1),
-            NewTopic(name="avg_sentiment", num_partitions=1, replication_factor=1)
-        ], validate_only=False)
-        print("Topics created.", file=sys.stderr)
+        create_topic(admin_client, "twitter_politics")
+        create_topic(admin_client, "avg_sentiment")
 
         while True:
             print("Scraping twitter for the latest tweets...", file=sys.stderr)
