@@ -1,6 +1,9 @@
 import os
 import sys
+import ast
 import time
+import requests
+from datetime import datetime
 from streamer import TwitterPartyStreamer
 from kafka import KafkaProducer
 from kafka.errors import TopicAlreadyExistsError
@@ -15,6 +18,35 @@ def create_topic(admin_client, topic):
         print(f"Topic {topic} created.", file=sys.stderr)
     except TopicAlreadyExistsError:
         print(f"Topics {topic} already exist.")
+
+
+def produce_to_topic(producer, topic, msg):
+    producer.send(topic, bytes(msg, encoding='utf-8'))
+    print("Sending " + msg)
+    producer.flush(timeout=60)
+
+
+def process_raw_tweet(line, queries):
+    msgs = list()
+
+    # Decompose the csv line into columns
+    row = line.split(",")
+
+    # Convert timestamp
+    timestamp = datetime.timestamp(datetime.strptime(row[1], "%Y-%m-%d %H:%M:%S %Z"))
+
+    # Compute the sentiment
+    sentiment = requests.post(os.getenv("VM_EXTERNAL_IP") + ':5000', json={"tweet": row[3]})
+    print(sentiment, file=sys.stderr)
+
+    # Add a message for each party hashtag
+    for hashtag in ast.literal_eval(row[4]):
+        hl = hashtag.lower()
+        party = queries.get(hl)
+        if party is not None:
+            msgs.append(",".join([timestamp, row[3], sentiment, party]))
+
+    return msgs
 
 
 if __name__ == '__main__':
@@ -40,9 +72,9 @@ if __name__ == '__main__':
             print("Producing tweets in Kafka's twitter_politics topic.", file=sys.stderr)
 
             for line in lines:
-                producer.send("twitter_politics", bytes(line, encoding='utf-8'))
-                print("Sending " + line)
-                producer.flush(timeout=60)
+                msgs = process_raw_tweet(line, streamer.queries)
+                for msg in msgs:
+                    produce_to_topic(producer, "twitter_politics", msg)
 
             time.sleep(300)
 

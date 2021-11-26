@@ -7,12 +7,30 @@ class TwitterPartyStreamer:
         self.temp = "temp.csv"
         self.stream = "/home/jovyan/data/stream.csv"
         self.resume = "resume.txt"
-        self.stream_columns = ["id", "created_at", "timezone", "user_id", "tweet", "hashtags"]
-        self.parties = [
-            'VVD', 'D66', 'PVV', 'PartijVoorDeVrijheid', 'CDA', 'SP', 'PvdA', 'Groenlinks',
-            'FvD', 'ForumVoorDemocratie', 'PvdD', 'PartijVoorDeDieren' 'Christenunie',
-            'Volt', 'JA21', 'SGP', 'DENK', '50Plus', 'BBB', 'BoerBurgerBeweging', 'Bij1',
-        ]
+        self.stream_columns = ["id", "created_at", "user_id", "tweet", "hashtags"]
+        self.queries = {
+            "vvd": "VVD",
+            "d66": "D66",
+            "pvv": "PVV",
+            "partijvoordevrijheid": "PVV",
+            "cda": "CDA",
+            "sp": "SP",
+            "pvda": "PvdA",
+            "groenlinks": "Groenlinks",
+            "fvd": "FvD",
+            "forumvoordemocratie": "FvD",
+            "pvdd": "PvdD",
+            "partijvoordedieren": "PvdD",
+            "christenunie": "Christenunie",
+            "volt": "Volt",
+            "ja21": "JA21",
+            "sgp": "SGP",
+            "denk": "DENK",
+            "50plus": "50Plus",
+            "bbb": "BBB",
+            "boerburgerbeweging": "BBB",
+            "bij1": "Bij1"
+        }
 
     def configure_twint(self):
         config = twint.Config()
@@ -24,7 +42,7 @@ class TwitterPartyStreamer:
         config.Output = self.temp
         config.Near = "Amsterdam"
         config.Resume = self.resume
-        config.Search = " OR ".join(["#" + party for party in self.parties])
+        config.Search = " OR ".join(["#" + query for query in [x for x in self.queries.keys()]])
         config.Custom["tweet"] = self.stream_columns
 
         return config
