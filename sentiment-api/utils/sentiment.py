@@ -29,11 +29,4 @@ class SentimentAnalyzer:
         
         score = self.model.polarity_scores(translation)["compound"]
 
-        if score >= 0.05:
-            sentiment = "positive"
-        if score <= -0.05:
-            sentiment = "negative"
-        if score > -0.05 and score < 0.05:
-            sentiment = "neutral"
-
-        return {"sentiment": sentiment}
+        return {"sentiment_score": score}
