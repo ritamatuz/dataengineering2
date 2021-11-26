@@ -16,7 +16,7 @@ def ananlyze_tweet():
             return jsonify({"error": "Please provide tweet as a JSON string."}), 400
 
         # Get the text input from the request body
-        tweet = request_body.get('tweet', [''])
+        tweet = request_body.get('tweet', '')
 
         # Make the predictions
         sentiment = sentiment_analyzer.analyze(tweet)
