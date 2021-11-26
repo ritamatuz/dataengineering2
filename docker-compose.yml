@@ -27,6 +27,9 @@ services:
 
   sentiment-api:
     build: ./sentiment-api
+    ports:
+      - "5000:5000"
+
 
   spark-driver-app:
     build: jupyter-all-spark-notebook-gcp    # jupyter/all-spark-notebook with spark configurations for bigquery and gcs
