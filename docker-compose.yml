@@ -40,7 +40,6 @@ services:
       - zookeeper
       - kafka1
       - sentiment-api
-    restart: unless-stopped
 
   spark-driver-app:
     build: jupyter-all-spark-notebook-gcp
