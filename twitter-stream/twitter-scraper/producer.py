@@ -37,7 +37,7 @@ def process_raw_tweet(line, queries):
     timestamp = datetime.timestamp(datetime.strptime(row[1], "%Y-%m-%d %H:%M:%S %Z"))
 
     # Compute the sentiment
-    sentiment = requests.post("http://34.88.146.250:5000/sentiment-api/analyze", json={"tweet": tweet}).json()['sentiment_score']
+    sentiment = requests.post(os.getenv("VM_EXTERNAL_IP") + ":5000/sentiment-api/analyze", json={"tweet": tweet}).json()['sentiment_score']
 
     # Add a message for each party hashtag
     for hashtag in hashtags:
@@ -64,8 +64,8 @@ if __name__ == '__main__':
             streamer = TwitterPartyStreamer()
             streamer.ingest()
 
-            #producer = KafkaProducer(bootstrap_servers=os.getenv("VM_EXTERNAL_IP") + ':9092')
-            producer = KafkaProducer(bootstrap_servers='34.88.146.250:9092')
+            producer = KafkaProducer(bootstrap_servers=os.getenv("VM_EXTERNAL_IP") + ':9092')
+            #producer = KafkaProducer(bootstrap_servers='34.88.146.250:9092')
 
             with open("/home/jovyan/data/stream.csv") as f:
             #with open("stream.csv") as f:
