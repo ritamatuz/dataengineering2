@@ -85,3 +85,4 @@ class TwitterPartyStreamer:
                     # Append new tweets to the stream
                     if int(row.split(",")[0]) > last_id:
                         f_stream.write(row)
+
