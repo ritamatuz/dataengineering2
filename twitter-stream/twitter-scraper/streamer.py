@@ -13,8 +13,7 @@ from kafka.admin import KafkaAdminClient, NewTopic
 class TwitterPartyStreamer:
     def __init__(self):
         self.temp = "temp.csv"
-        self.stream = "stream.csv"
-        #self.stream = "/home/jovyan/data/stream.csv"
+        self.stream = "/home/jovyan/data/stream.csv"
         self.resume = "resume.txt"
         self.stream_columns = ["id", "created_at", "user_id", "tweet"]
         self.producer = KafkaProducer(bootstrap_servers=os.getenv("VM_EXTERNAL_IP") + ':9092')
@@ -93,7 +92,6 @@ class TwitterPartyStreamer:
         # Compute the sentiment
         sentiment = requests.post('http://' + os.getenv("VM_EXTERNAL_IP") + ":5000/sentiment-api/analyze",
                                   json={"tweet": tweet}).json()['sentiment_score']
-
 
         # Add a message for each party hashtag
         for hashtag in hashtags:
