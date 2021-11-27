@@ -15,7 +15,8 @@ class TwitterPartyStreamer:
         self.temp = "temp.csv"
         self.stream = "/home/jovyan/data/stream.csv"
         self.resume = "resume.txt"
-        self.stream_columns = ["id", "created_at", "user_id", "tweet"]
+        self.input_columns = ["id", "created_at", "user_id", "tweet"]
+        self.output_columns = ["id", "user_id", "created_at", "party", "sentiment", "tweet"]
         self.producer = KafkaProducer(bootstrap_servers=os.getenv("VM_EXTERNAL_IP") + ':9092')
         self.queries = {
             "vvd": "VVD",
@@ -52,7 +53,7 @@ class TwitterPartyStreamer:
         config.Near = "Amsterdam"
         config.Resume = self.resume
         config.Search = " OR ".join(["#" + query for query in [x for x in self.queries.keys()]])
-        config.Custom["tweet"] = self.stream_columns
+        config.Custom["tweet"] = self.input_columns
         return config
 
     def ingest(self):
@@ -75,7 +76,7 @@ class TwitterPartyStreamer:
                 return file.readline().decode().split(",")
         except (FileNotFoundError, OSError):
             with open(self.stream, "w") as file:
-                file.write(",".join(self.stream_columns) + "\n")
+                file.write(",".join(self.output_columns) + "\n")
             return []
 
     def process_raw_tweet(self, row):
