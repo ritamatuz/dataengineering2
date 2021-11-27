@@ -29,7 +29,7 @@ services:
     container_name: twitter-streamer
     user: root
     environment:
-      - VM_EXTERNAL_IP=http://34.88.146.250
+      - VM_EXTERNAL_IP=34.88.146.250
     volumes:
       - spark-data:/home/jovyan/data
     depends_on:

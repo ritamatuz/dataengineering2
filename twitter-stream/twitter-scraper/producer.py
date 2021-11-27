@@ -30,21 +30,21 @@ def process_raw_tweet(line, queries):
 
     # Decompose the csv line into columns
     row = line.split(",")
-    tweet = row[3]
-    hashtags = set(part[1:] for part in tweet.split() if part.startswith('#'))
+    hashtags = set(part[1:] for part in row[3].split() if part.startswith('#'))
 
     # Convert timestamp
     timestamp = datetime.timestamp(datetime.strptime(row[1], "%Y-%m-%d %H:%M:%S %Z"))
 
     # Compute the sentiment
-    sentiment = requests.post(os.getenv("VM_EXTERNAL_IP") + ":5000/sentiment-api/analyze", json={"tweet": tweet}).json()['sentiment_score']
+    sentiment = requests.post('http://' + os.getenv("VM_EXTERNAL_IP") + ":5000/sentiment-api/analyze",
+                              json={"tweet": row[3]}).json()['sentiment_score']
 
     # Add a message for each party hashtag
     for hashtag in hashtags:
         hl = hashtag.lower()
         party = queries.get(hl)
         if party is not None:
-            msgs.append(f"{timestamp},{row[3]},{sentiment},{party}")
+            msgs.append(f"{row[0]},{timestamp},{row[3]},{sentiment},{party}")
 
     return msgs
 
