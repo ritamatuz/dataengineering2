@@ -29,16 +29,13 @@ services:
     container_name: twitter-streamer
     user: root
     environment:
-      - VM_EXTERNAL_IP=34.88.146.250
+      - VM_EXTERNAL_IP=34.88.7.87
     volumes:
       - spark-data:/home/jovyan/data
     depends_on:
-      - spark-driver-app
-      - spark-master
-      - spark-worker-1
-      - spark-worker-2
       - zookeeper
       - kafka1
+      - sentiment-api
 
   spark-driver-app:
     build: jupyter-all-spark-notebook-gcp
@@ -125,7 +122,7 @@ services:
       - "9092:9092"
     environment:
       # Fill in external IP of VM
-      KAFKA_ADVERTISED_LISTENERS: LISTENER_DOCKER_INTERNAL://kafka1:9093,LISTENER_DOCKER_EXTERNAL://34.88.146.250:9092
+      KAFKA_ADVERTISED_LISTENERS: LISTENER_DOCKER_INTERNAL://kafka1:9093,LISTENER_DOCKER_EXTERNAL://34.88.7.87:9092
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: LISTENER_DOCKER_INTERNAL:PLAINTEXT,LISTENER_DOCKER_EXTERNAL:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: LISTENER_DOCKER_INTERNAL
       KAFKA_ZOOKEEPER_CONNECT: "zookeeper:2181"
