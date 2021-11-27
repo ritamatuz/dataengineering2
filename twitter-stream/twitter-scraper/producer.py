@@ -1,4 +1,5 @@
 import os
+import re
 import sys
 import time
 import requests
@@ -30,22 +31,22 @@ def process_raw_tweet(line, queries):
 
     # Decompose the csv line into columns
     row = line.split(",")
-    hashtags = set(part[1:] for part in row[3].split() if part.startswith('#'))
-
-    # Convert timestamp
+    tweet_id = row[0]
     timestamp = datetime.timestamp(datetime.strptime(row[1], "%Y-%m-%d %H:%M:%S %Z"))
+    user_id = row[2]
+    tweet = "".join(row[3:]).replace(",", "").replace("'", "").replace('"', '')
+    hashtags = set([re.sub(r"(\W+)$", "", j) for j in set([i.replace("#", "") for i in tweet.split() if i.startswith("#")])])
 
     # Compute the sentiment
     sentiment = requests.post('http://' + os.getenv("VM_EXTERNAL_IP") + ":5000/sentiment-api/analyze",
-                              json={"tweet": row[3]}).json()['sentiment_score']
+                              json={"tweet": tweet}).json()['sentiment_score']
 
     # Add a message for each party hashtag
     for hashtag in hashtags:
         hl = hashtag.lower()
         party = queries.get(hl)
         if party is not None:
-            msgs.append(f"{row[0]},{timestamp},{row[3]},{sentiment},{party}")
-
+            msgs.append(f"{tweet_id},{user_id},{timestamp},{party},{sentiment},{tweet}")
     return msgs
 
 
@@ -65,10 +66,8 @@ if __name__ == '__main__':
             streamer.ingest()
 
             producer = KafkaProducer(bootstrap_servers=os.getenv("VM_EXTERNAL_IP") + ':9092')
-            #producer = KafkaProducer(bootstrap_servers='34.88.146.250:9092')
 
             with open("/home/jovyan/data/stream.csv") as f:
-            #with open("stream.csv") as f:
                 lines = f.readlines()
 
             print("Producing tweets in Kafka's twitter_politics topic.", file=sys.stderr)
