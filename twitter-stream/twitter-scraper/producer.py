@@ -1,3 +1,4 @@
+import os
 import sys
 import time
 import requests
@@ -36,9 +37,7 @@ def process_raw_tweet(line, queries):
     timestamp = datetime.timestamp(datetime.strptime(row[1], "%Y-%m-%d %H:%M:%S %Z"))
 
     # Compute the sentiment
-    #sentiment = requests.post(os.getenv("VM_EXTERNAL_IP") + ':5000/sentiment-api/analyze', json={"tweet": row[3]})
-    sentiment = requests.post("http://34.88.146.250:5000/sentiment-api/analyze",
-                              json={"tweet": tweet}).json()['sentiment_score']
+    sentiment = requests.post("http://34.88.146.250:5000/sentiment-api/analyze", json={"tweet": tweet}).json()['sentiment_score']
 
     # Add a message for each party hashtag
     for hashtag in hashtags:
@@ -55,9 +54,9 @@ if __name__ == '__main__':
         print("Streaming has been started.", file=sys.stderr)
 
         print("Creating topics...", file=sys.stderr)
-        # admin_client = KafkaAdminClient(bootstrap_servers=os.getenv("VM_EXTERNAL_IP") + ':9092', client_id='DE2')
-        # create_topic(admin_client, "twitter_politics")
-        # create_topic(admin_client, "avg_sentiment")
+        admin_client = KafkaAdminClient(bootstrap_servers=os.getenv("VM_EXTERNAL_IP") + ':9092', client_id='DE2')
+        create_topic(admin_client, "twitter_politics")
+        create_topic(admin_client, "avg_sentiment")
 
         while True:
             print("Scraping twitter for the latest tweets...", file=sys.stderr)
