@@ -65,7 +65,8 @@ if __name__ == '__main__':
             streamer = TwitterPartyStreamer()
             streamer.ingest()
 
-            producer = KafkaProducer(bootstrap_servers=os.getenv("VM_EXTERNAL_IP") + ':9092')
+            #producer = KafkaProducer(bootstrap_servers=os.getenv("VM_EXTERNAL_IP") + ':9092')
+            producer = KafkaProducer(bootstrap_servers='34.88.146.250:9092')
 
             with open("/home/jovyan/data/stream.csv") as f:
                 lines = f.readlines()
