@@ -8,7 +8,7 @@ class TwitterPartyStreamer:
         self.stream = "/home/jovyan/data/stream.csv"
         #self.stream = "stream.csv"
         self.resume = "resume.txt"
-        self.stream_columns = ["id", "created_at", "user_id", "tweet", "hashtags"]
+        self.stream_columns = ["id", "created_at", "user_id", "tweet"]
         self.queries = {
             "vvd": "VVD",
             "d66": "D66",
@@ -36,6 +36,7 @@ class TwitterPartyStreamer:
     def configure_twint(self):
         config = twint.Config()
         config.Limit = 300
+        #config.Limit = 20
         config.Lang = "nl"
         config.Count = True
         config.Store_csv = True

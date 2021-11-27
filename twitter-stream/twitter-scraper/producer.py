@@ -1,6 +1,4 @@
-import os
 import sys
-import ast
 import time
 import requests
 from datetime import datetime
@@ -27,26 +25,27 @@ def produce_to_topic(producer, topic, msg):
 
 
 def process_raw_tweet(line, queries):
-    print(line, file=sys.stderr)
     msgs = list()
 
     # Decompose the csv line into columns
     row = line.split(",")
+    tweet = row[3]
+    hashtags = set(part[1:] for part in tweet.split() if part.startswith('#'))
 
     # Convert timestamp
-    print(row[1], file=sys.stderr)
-    timestamp = datetime.timestamp(datetime.strptime(row[1], "%Y-%m-%d %H:%M:%S"))
+    timestamp = datetime.timestamp(datetime.strptime(row[1], "%Y-%m-%d %H:%M:%S %Z"))
 
     # Compute the sentiment
-    sentiment = requests.post(os.getenv("VM_EXTERNAL_IP") + ':5000/sentiment-api/analyze', json={"tweet": row[3]})
-    print(sentiment, file=sys.stderr)
+    #sentiment = requests.post(os.getenv("VM_EXTERNAL_IP") + ':5000/sentiment-api/analyze', json={"tweet": row[3]})
+    sentiment = requests.post("http://34.88.146.250:5000/sentiment-api/analyze",
+                              json={"tweet": tweet}).json()['sentiment_score']
 
     # Add a message for each party hashtag
-    for hashtag in ast.literal_eval(row[4]):
+    for hashtag in hashtags:
         hl = hashtag.lower()
         party = queries.get(hl)
         if party is not None:
-            msgs.append(",".join([timestamp, row[3], sentiment, party]))
+            msgs.append(f"{timestamp},{row[3]},{sentiment},{party}")
 
     return msgs
 
@@ -66,8 +65,8 @@ if __name__ == '__main__':
             streamer = TwitterPartyStreamer()
             streamer.ingest()
 
-            producer = KafkaProducer(bootstrap_servers=os.getenv("VM_EXTERNAL_IP") + ':9092')
-            #producer = KafkaProducer(bootstrap_servers='34.88.146.250:9092')
+            #producer = KafkaProducer(bootstrap_servers=os.getenv("VM_EXTERNAL_IP") + ':9092')
+            producer = KafkaProducer(bootstrap_servers='34.88.146.250:9092')
 
             with open("/home/jovyan/data/stream.csv") as f:
             #with open("stream.csv") as f:
@@ -78,9 +77,8 @@ if __name__ == '__main__':
             first_line = True
             for line in lines:
                 if first_line:
+                    first_line = False
                     continue
-                first_line = False
-                print("In CSV stream")
                 msgs = process_raw_tweet(line, streamer.queries)
                 for msg in msgs:
                     produce_to_topic(producer, "twitter_politics", msg)
