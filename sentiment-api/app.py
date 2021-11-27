@@ -17,6 +17,7 @@ def ananlyze_tweet():
 
         # Get the text input from the request body
         tweet = request_body.get('tweet', '')
+        print(f"Analyzing sentiment of tweet\n{tweet}\n", file=sys.stderr)
 
         # Make the predictions
         sentiment = sentiment_analyzer.analyze(tweet)

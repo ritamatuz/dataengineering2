@@ -136,7 +136,7 @@ def create_topic(admin_client, topic):
         ], validate_only=False)
         print(f"Topic {topic} created.", file=sys.stderr)
     except TopicAlreadyExistsError:
-        print(f"Topics {topic} already exist.")
+        print(f"Topic {topic} already exists.")
 
 
 if __name__ == '__main__':
