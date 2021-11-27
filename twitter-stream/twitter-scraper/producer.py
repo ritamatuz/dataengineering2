@@ -55,9 +55,9 @@ if __name__ == '__main__':
         print("Streaming has been started.", file=sys.stderr)
 
         print("Creating topics...", file=sys.stderr)
-        admin_client = KafkaAdminClient(bootstrap_servers=os.getenv("VM_EXTERNAL_IP") + ':9092', client_id='DE2')
-        create_topic(admin_client, "twitter_politics")
-        create_topic(admin_client, "avg_sentiment")
+        # admin_client = KafkaAdminClient(bootstrap_servers=os.getenv("VM_EXTERNAL_IP") + ':9092', client_id='DE2')
+        # create_topic(admin_client, "twitter_politics")
+        # create_topic(admin_client, "avg_sentiment")
 
         while True:
             print("Scraping twitter for the latest tweets...", file=sys.stderr)
