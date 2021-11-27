@@ -2,10 +2,10 @@ from kafka import KafkaConsumer
 
 
 if __name__ == '__main__':
-    consumer = KafkaConsumer(bootstrap_servers='34.88.146.250:9092',
+    consumer = KafkaConsumer(bootstrap_servers='34.88.7.87:9092',
                              auto_offset_reset='earliest',
-                             consumer_timeout_ms=10000)
+                             consumer_timeout_ms=1000 * 60)
     print(consumer.topics())
-    consumer.subscribe(topics=['twitter_politics'])
+    consumer.subscribe(topics=['avg_sentiment'])
     for msg in consumer:
         print(msg.value.decode("utf-8"))
