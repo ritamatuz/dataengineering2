@@ -5,8 +5,8 @@ import twint
 class TwitterPartyStreamer:
     def __init__(self):
         self.temp = "temp.csv"
-        #self.stream = "/home/jovyan/data/stream.csv"
-        self.stream = "stream.csv"
+        self.stream = "/home/jovyan/data/stream.csv"
+        #self.stream = "stream.csv"
         self.resume = "resume.txt"
         self.stream_columns = ["id", "created_at", "user_id", "tweet", "hashtags"]
         self.queries = {

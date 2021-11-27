@@ -66,11 +66,11 @@ if __name__ == '__main__':
             streamer = TwitterPartyStreamer()
             streamer.ingest()
 
-            #producer = KafkaProducer(bootstrap_servers=os.getenv("VM_EXTERNAL_IP") + ':9092')
-            producer = KafkaProducer(bootstrap_servers='34.88.146.250:9092')
+            producer = KafkaProducer(bootstrap_servers=os.getenv("VM_EXTERNAL_IP") + ':9092')
+            #producer = KafkaProducer(bootstrap_servers='34.88.146.250:9092')
 
-            #with open("/home/jovyan/data/stream.csv") as f:
-            with open("stream.csv") as f:
+            with open("/home/jovyan/data/stream.csv") as f:
+            #with open("stream.csv") as f:
                 lines = f.readlines()
 
             print("Producing tweets in Kafka's twitter_politics topic.", file=sys.stderr)
@@ -80,6 +80,7 @@ if __name__ == '__main__':
                 if first_line:
                     continue
                 first_line = False
+                print("In CSV stream")
                 msgs = process_raw_tweet(line, streamer.queries)
                 for msg in msgs:
                     produce_to_topic(producer, "twitter_politics", msg)
