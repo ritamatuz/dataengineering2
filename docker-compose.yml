@@ -33,10 +33,6 @@ services:
     volumes:
       - spark-data:/home/jovyan/data
     depends_on:
-      - spark-driver-app
-      - spark-master
-      - spark-worker-1
-      - spark-worker-2
       - zookeeper
       - kafka1
       - sentiment-api

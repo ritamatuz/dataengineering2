@@ -27,6 +27,7 @@ def produce_to_topic(producer, topic, msg):
 
 
 def process_raw_tweet(line, queries):
+    print(line, file=sys.stderr)
     msgs = list()
 
     # Decompose the csv line into columns
@@ -37,7 +38,7 @@ def process_raw_tweet(line, queries):
     timestamp = datetime.timestamp(datetime.strptime(row[1], "%Y-%m-%d %H:%M:%S"))
 
     # Compute the sentiment
-    sentiment = requests.post(os.getenv("VM_EXTERNAL_IP") + ':5000', json={"tweet": row[3]})
+    sentiment = requests.post(os.getenv("VM_EXTERNAL_IP") + ':5000/sentiment-api/analyze', json={"tweet": row[3]})
     print(sentiment, file=sys.stderr)
 
     # Add a message for each party hashtag
@@ -68,7 +69,8 @@ if __name__ == '__main__':
             #producer = KafkaProducer(bootstrap_servers=os.getenv("VM_EXTERNAL_IP") + ':9092')
             producer = KafkaProducer(bootstrap_servers='34.88.146.250:9092')
 
-            with open("/home/jovyan/data/stream.csv") as f:
+            #with open("/home/jovyan/data/stream.csv") as f:
+            with open("stream.csv") as f:
                 lines = f.readlines()
 
             print("Producing tweets in Kafka's twitter_politics topic.", file=sys.stderr)
